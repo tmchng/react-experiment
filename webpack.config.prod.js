@@ -6,6 +6,8 @@ import WebpackMd5Hash from 'webpack-md5-hash';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import autoprefixer from 'autoprefixer';
 
+const path = require('path');
+
 const GLOBALS = {
   'process.env.NODE_ENV': JSON.stringify('production'),
   __DEV__: false
@@ -13,12 +15,15 @@ const GLOBALS = {
 
 export default {
   resolve: {
-    extensions: ['', '.js', '.jsx']
+    root: [
+      path.resolve(__dirname, './src'),
+    ],
+    extensions: ['', '.js', '.jsx'],
   },
   debug: true,
   devtool: 'source-map', // more info:https://webpack.github.io/docs/build-performance.html#sourcemaps and https://webpack.github.io/docs/configuration.html#devtool
   noInfo: true, // set to false to see a list of every file being bundled.
-  entry: './src/index',
+  entry: './src/app/index',
   target: 'web', // necessary per https://webpack.github.io/docs/testing.html#compile-and-test
   output: {
     path: `${__dirname}/dist`,
@@ -74,7 +79,31 @@ export default {
       {test: /\.svg(\?v=\d+.\d+.\d+)?$/, loader: 'url?limit=10000&mimetype=image/svg+xml&name=[name].[ext]'},
       {test: /\.(jpe?g|png|gif)$/i, loader: 'file?name=[name].[ext]'},
       {test: /\.ico$/, loader: 'file?name=[name].[ext]'},
-      {test: /(\.css|\.scss)$/, loader: ExtractTextPlugin.extract('css?sourceMap!postcss!sass?sourceMap')}
+      {
+        test: /(\.css|\.scss)$/,
+        exclude: [
+          /node_modules/,
+          path.resolve(__dirname, './src/app/styles')
+        ],
+        loaders: [
+          'style?sourceMap',
+          'css?modules&localIdentName=[path]__[name]__[local]__[hash:base64:5]',
+          'postcss',
+          'sass?sourceMap'
+        ],
+      },
+      {
+        test: /\.scss$/,
+        include: [
+          path.resolve(__dirname, './src/app/styles')
+        ],
+        loaders: [
+          'style',
+          'css?sourceMap',
+          'postcss',
+          'sass?sourceMap'
+        ],
+      },
     ]
   },
   postcss: ()=> [autoprefixer]

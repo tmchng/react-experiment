@@ -1,0 +1,34 @@
+@import '../../../styles/variables.scss';
+
+.header {
+  display: table;
+  height: 100px;
+  width: 100%;
+  border: 1px solid black;
+  box-sizing: border-box;
+}
+
+.header-section {
+  display: table-cell;
+  vertical-align: middle;
+  height: 100%;
+  margin: 0;
+}
+
+.comp-name {
+  composes: header-section;
+  color: $font-color;
+}
+
+.nav-links {
+  composes: header-section;
+  text-align: right;
+
+  > li {
+    display: inline-block;
+  }
+
+  > li:not(:first-child) {
+    margin-left: 10px;
+  }
+}
